@@ -72,16 +72,24 @@ export function HabitForm() {
         return true;
     }
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         if (!validate()) {
             return;
         }
 
-        // ya esta valido el form
-
-        alert("Formulario válido");
+        try {
+            await fetch("http://localhost:3000/habits", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
