@@ -4,6 +4,7 @@ import { useState } from "react";
 import * as z from "zod";
 import { TextField } from "@mui/material";
 import { habitSchema } from "../../lib/validations/habit";
+import { createHabit } from "@/app/services/habit.service";
 
 const predefinedHabits = [
     {
@@ -32,10 +33,17 @@ const predefinedHabits = [
     },
 ];
 
+export type HabitForm = {
+    name: string;
+    startDate: string;
+    description: string;
+};
+
 export function HabitForm() {
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<HabitForm>({
         name: "",
         startDate: "",
+        description: "",
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -62,7 +70,6 @@ export function HabitForm() {
                     newErrors[String(field)] = issue.message;
                 }
             });
-
             setErrors(newErrors);
 
             return false;
@@ -74,19 +81,15 @@ export function HabitForm() {
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
+        console.log("form");
         if (!validate()) {
             return;
         }
 
         try {
-            await fetch("http://localhost:3000/habits", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(form),
-            });
+            console.log(form);
+            await createHabit(form);
+            alert("Created");
         } catch (error) {
             console.log(error);
         }
@@ -138,6 +141,22 @@ export function HabitForm() {
                 }
                 error={!!errors.startDate}
                 helperText={errors.startDate}
+                fullWidth
+                margin="normal"
+            />
+
+            <TextField
+                id="description"
+                label="Descripcion del hábito"
+                value={form.description}
+                onChange={(event) => {
+                    setForm({
+                        ...form,
+                        description: event.target.value,
+                    });
+                }}
+                error={!!errors.description}
+                helperText={errors.description}
                 fullWidth
                 margin="normal"
             />

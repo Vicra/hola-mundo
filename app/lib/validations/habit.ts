@@ -14,4 +14,10 @@ export const habitSchema = z.object({
     startDate: z
         .string("Formato incorrecto")
         .min(1, "Selecciona una fecha de inicio"),
+
+    description: z
+        .string("Field needs to be a string")
+        .nonempty("Description cannot be empty")
+        .min(3, "Value needs to be 3 or more chars")
+        .max(10, "Value needs to have 10 or less chars"),
 });
